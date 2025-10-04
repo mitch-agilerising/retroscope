@@ -1,8 +1,9 @@
-from PySide6 import QtCore, QtWidgets
+from PySide6 import  QtWidgets
 from PySide6.QtGui import QStandardItemModel, QStandardItem
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QVBoxLayout, QHBoxLayout,  QLabel, QComboBox, 
-    QSizePolicy, QTreeView
+    QSizePolicy, QTreeView, QHeaderView
 )
 
 class RetroScopeUI(QtWidgets.QWidget):
@@ -38,22 +39,35 @@ class RetroScopeUI(QtWidgets.QWidget):
         mainLayout.addWidget(treeView)
         self.setLayout(mainLayout)
         
-        model = QStandardItemModel(0, 4)
-        headers = ["Assignee", "Day 1", "Day 2", "Day 3"]
-        model.setHorizontalHeaderLabels(headers)
+        self.model = QStandardItemModel(0, 1)
+        headers = ["Assignee"]
+        for i in range(1, 11):
+            headers.append("Day " + str(i))
+        self.model.setHorizontalHeaderLabels(headers)
 
-        model.appendRow(self.makeRow("Julius Alabaster", 0, 1, 2))
-        model.appendRow(self.makeRow("Helene Trabene", 0, 1, 2))
-        model.appendRow(self.makeRow("Oscar De Hoyos", 0, 1, 2))
-        model.appendRow(self.makeRow("Sanda Keesman", 0, 1, 2))
+        self.model.appendRow(self.makeRow("Julius Alabaster", list(range(1, 11))))
+        self.model.appendRow(self.makeRow("Helene Trabene", list(range(1, 11))))
+        self.model.appendRow(self.makeRow("Oscar De Hoyos", list(range(1, 11))))
+        self.model.appendRow(self.makeRow("Sanda Keesman", list(range(1, 11))))
 
-        treeView.setModel(model);
+        n = Qt
+        self.model.setHeaderData(1, Qt.Orientation.Horizontal, Qt.AlignCenter, Qt.TextAlignmentRole)
+        treeView.setModel(self.model);
         treeView.show()
+
+        header = treeView.header()
+        header.setSectionResizeMode(0, QHeaderView.ResizeMode.Fixed)
+        header.setSectionResizeMode(1, QHeaderView.ResizeMode.Fixed)
+        header.setSectionResizeMode(2, QHeaderView.ResizeMode.Fixed)
+        header.setSectionResizeMode(3, QHeaderView.ResizeMode.Fixed)
+        header.resizeSection(0, 150)
+        for i in range(1, 11):
+            header.resizeSection(i, 50)
         
-    def makeRow(self, assignee, first, second, third) -> list[any]:
+    def makeRow(self, assignee, values) -> list[any]:
         row = []
         row.append(QStandardItem(assignee))
-        row.append(QStandardItem(str(first)))
-        row.append(QStandardItem(str(second)))
-        row.append(QStandardItem(str(third)))
+        
+        for i in range(1,11):
+            row.append(QStandardItem(str(i)))
         return row
