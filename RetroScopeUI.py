@@ -1,24 +1,30 @@
 from PySide6 import QtCore, QtWidgets
-from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QScrollArea, QLabel, QComboBox, QSizePolicy
+from PySide6.QtGui import QStandardItemModel, QStandardItem
+from PySide6.QtWidgets import (
+    QVBoxLayout, QHBoxLayout,  QLabel, QComboBox, 
+    QSizePolicy, QTreeView
+)
 
 class RetroScopeUI(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         
-        mainLayout = QVBoxLayout()
-        topLayout = QHBoxLayout()
-        scrollArea = QScrollArea()
+        self.setWindowTitle("RetroScope")
 
-        projectLabel = QLabel("Project:")
-        projectCombo = QComboBox()
+        mainLayout: QVBoxLayout = QVBoxLayout()
+        topLayout: QVBoxLayout = QHBoxLayout()
+        treeView: QTreeView = QTreeView()
+
+        projectLabel: QLabel = QLabel("Project:")
+        projectCombo: QComboBox = QComboBox()
         projectCombo.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
-        boardLabel = QLabel("Board:")
-        boardCombo = QComboBox()
+        boardLabel: QLabel = QLabel("Board:")
+        boardCombo: QComboBox = QComboBox()
         boardCombo.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
-        sprintLabel = QLabel("Sprint:")
-        sprintCombo = QComboBox()
+        sprintLabel: QLabel = QLabel("Sprint:")
+        sprintCombo: QComboBox = QComboBox()
         sprintCombo.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
         topLayout.addWidget(projectLabel)
@@ -28,11 +34,26 @@ class RetroScopeUI(QtWidgets.QWidget):
         topLayout.addWidget(sprintLabel)
         topLayout.addWidget(sprintCombo)
 
-
         mainLayout.addLayout(topLayout)
-        mainLayout.addWidget(scrollArea)
+        mainLayout.addWidget(treeView)
         self.setLayout(mainLayout)
+        
+        model = QStandardItemModel(0, 4)
+        headers = ["Assignee", "Day 1", "Day 2", "Day 3"]
+        model.setHorizontalHeaderLabels(headers)
 
-        self.setWindowTitle("RetroScope")
+        model.appendRow(self.makeRow("Julius Alabaster", 0, 1, 2))
+        model.appendRow(self.makeRow("Helene Trabene", 0, 1, 2))
+        model.appendRow(self.makeRow("Oscar De Hoyos", 0, 1, 2))
+        model.appendRow(self.makeRow("Sanda Keesman", 0, 1, 2))
 
-
+        treeView.setModel(model);
+        treeView.show()
+        
+    def makeRow(self, assignee, first, second, third) -> list[any]:
+        row = []
+        row.append(QStandardItem(assignee))
+        row.append(QStandardItem(str(first)))
+        row.append(QStandardItem(str(second)))
+        row.append(QStandardItem(str(third)))
+        return row
