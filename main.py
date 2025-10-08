@@ -2,7 +2,7 @@
 Here's mud in yer eye
 """
 import sys
-from PySide6 import QtWidgets, QtGui
+from PySide6 import QtWidgets
 
 from RetroScopeUI import RetroScopeUI
 

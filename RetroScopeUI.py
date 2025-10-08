@@ -1,9 +1,9 @@
 from PySide6 import  QtWidgets
-from PySide6.QtGui import QStandardItemModel, QStandardItem
+from PySide6.QtGui import QStandardItemModel, QStandardItem, QPainter
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QVBoxLayout, QHBoxLayout,  QLabel, QComboBox, 
-    QSizePolicy, QTreeView, QHeaderView
+    QSizePolicy, QTreeView, QHeaderView, QStyledItemDelegate
 )
 
 class RetroScopeUI(QtWidgets.QWidget):
@@ -53,7 +53,8 @@ class RetroScopeUI(QtWidgets.QWidget):
         n = Qt
         self.model.setHeaderData(1, Qt.Orientation.Horizontal, Qt.AlignCenter, Qt.TextAlignmentRole)
         treeView.setModel(self.model);
-        treeView.show()
+        treeView.setItemDelegate(TreeViewDelegate())
+        treeView.setStyleSheet("QTreeView::item { height: 50px; }")
 
         header = treeView.header()
         header.setSectionResizeMode(0, QHeaderView.ResizeMode.Fixed)
@@ -63,6 +64,8 @@ class RetroScopeUI(QtWidgets.QWidget):
         header.resizeSection(0, 150)
         for i in range(1, 11):
             header.resizeSection(i, 50)
+
+        treeView.show()
         
     def makeRow(self, assignee, values) -> list[any]:
         row = []
@@ -71,3 +74,10 @@ class RetroScopeUI(QtWidgets.QWidget):
         for i in range(1,11):
             row.append(QStandardItem(str(i)))
         return row
+    
+class TreeViewDelegate(QStyledItemDelegate):
+
+    def paint(self, painter: QPainter, option, index):
+        super().paint(painter, option, index)
+        #print(f"{index} -{option}")
+        return
