@@ -9,7 +9,7 @@ from RetroScopeUI import RetroScopeUI
 if __name__ == "__main__":
     app = QtWidgets.QApplication([])
     widget = RetroScopeUI()
-    widget.resize(800, 600)
+    widget.resize(850, 600)
     widget.show()
 
     sys.exit(app.exec())
