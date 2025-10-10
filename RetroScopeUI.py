@@ -64,7 +64,7 @@ class RetroScopeUI(QtWidgets.QWidget):
         self.model.setHeaderData(1, Qt.Orientation.Horizontal, Qt.AlignCenter, Qt.TextAlignmentRole)
         treeView.setModel(self.model);
         treeView.setItemDelegate(TreeViewDelegate())
-        treeView.setStyleSheet("QTreeView::item { height: 30px; }")
+        treeView.setStyleSheet("QTreeView::item { height: 24px; }")
 
         header = treeView.header()
         header.setSectionResizeMode(0, QHeaderView.ResizeMode.Fixed)
