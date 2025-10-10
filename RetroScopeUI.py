@@ -1,4 +1,4 @@
-from PySide6 import  QtWidgets
+from PySide6 import QtWidgets
 from PySide6.QtGui import QStandardItemModel, QStandardItem, QPainter
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
