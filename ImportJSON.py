@@ -68,8 +68,8 @@ def create_stories_model(file_path: str) -> QStandardItemModel:
         for story in stories:
             # Create a list of QStandardItems for the story's data
             row_items = [
-                QStandardItem(story.get("Story ID", "")),
                 QStandardItem(story.get("Title", "")),
+                QStandardItem(story.get("Story ID", "")),
                 QStandardItem(str(story.get("Points", ""))),
             ]
             # Add status for each day
@@ -104,8 +104,9 @@ if __name__ == '__main__':
     widget.setLayout(main_layout)
     widget.show()
     
-
+    """
     # Verification: Check if the model was populated correctly
+
     if story_model.rowCount() > 0:
         print(f"Successfully created the model from '{json_file_path}'.")
         print(f"Found {story_model.rowCount()} assignees (top-level items).")
@@ -117,5 +118,5 @@ if __name__ == '__main__':
         print(f"The first assignee '{first_assignee_name}' has {num_stories} stories.")
     else:
         print("Failed to create or populate the model.")
-
+    """
     sys.exit(app.exec())

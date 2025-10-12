@@ -1,6 +1,7 @@
 from PySide6 import QtWidgets
-from PySide6.QtGui import QStandardItemModel, QStandardItem, QPainter
-from PySide6.QtCore import Qt
+from PySide6.QtGui import QStandardItemModel, QStandardItem, QPainter, QColorConstants
+from PySide6.QtCore import Qt, QModelIndex, QRect
+from ImportJSON import create_stories_model
 from PySide6.QtWidgets import (
     QVBoxLayout, QHBoxLayout,  QLabel, QComboBox, 
     QSizePolicy, QTreeView, QHeaderView, QStyledItemDelegate,
@@ -40,61 +41,55 @@ class RetroScopeUI(QtWidgets.QWidget):
         mainLayout.addWidget(treeView)
         self.setLayout(mainLayout)
         
-        self.model = QStandardItemModel(0, 1)
-        headers = ["Assignee"]
-        for i in range(1, 11):
-            headers.append("Day " + str(i))
-        self.model.setHorizontalHeaderLabels(headers)
+        json_file_path = 'StoryData.json'
+        self.model = create_stories_model(json_file_path)
 
-        parent = self.makeParentRow("Julius Alabaster");
-        self.model.appendRow(parent)
-        item: QStandardItem = parent[0]
-
-        child = self.makeChildRow("JIRA-102 Add claims denomination", list(range(1,11)))
-        item.appendRow(child)
-        child = self.makeChildRow("JIRA-111 Reapply version markers", list(range(1,11)))
-        item.appendRow(child)
-        child = self.makeChildRow("JIRA-169 Upgrade and rebuffer mapping attributes", list(range(1,11)))
-        item.appendRow(child)
-
-        #self.model.appendRow(self.makeRow("Helene Trabene", list(range(1, 11))))
-        #self.model.appendRow(self.makeRow("Oscar De Hoyos", list(range(1, 11))))
-        #self.model.appendRow(self.makeRow("Sanda Keesman", list(range(1, 11))))
-
-        self.model.setHeaderData(1, Qt.Orientation.Horizontal, Qt.AlignCenter, Qt.TextAlignmentRole)
         treeView.setModel(self.model);
         treeView.setItemDelegate(TreeViewDelegate())
         treeView.setStyleSheet("QTreeView::item { height: 24px; }")
 
         header = treeView.header()
+        header.resizeSection(0, 220)
+        header.resizeSection(1, 80)
         header.setSectionResizeMode(0, QHeaderView.ResizeMode.Fixed)
         header.setSectionResizeMode(1, QHeaderView.ResizeMode.Fixed)
-        header.setSectionResizeMode(2, QHeaderView.ResizeMode.Fixed)
-        header.setSectionResizeMode(3, QHeaderView.ResizeMode.Fixed)
-        header.resizeSection(0, 300)
-        for i in range(1, 11):
+
+
+        for i in range(2, 13):
             header.resizeSection(i, 50)
+            header.setSectionResizeMode(i, QHeaderView.ResizeMode.Fixed)
         treeView.expandAll()
         treeView.setItemsExpandable(False)
         treeView.show()
-
-    def makeParentRow(self, assignee) -> list[any]:
-        row = []
-        row.append(QStandardItem(assignee))
-        return row
-        
-    def makeChildRow(self, story, values) -> list[any]:
-        row = []
-        storyItem = QStandardItem(story) 
-        storyItem.setData(story, Qt.ItemDataRole.ToolTipRole)
-        row.append(storyItem)
-        
-        for i in range(1,11):
-            row.append(QStandardItem(str(i)))
-        return row
     
 class TreeViewDelegate(QStyledItemDelegate):
     def paint(self, painter: QPainter, option, index):
+        modelIndex: QModelIndex = index;
+        if (modelIndex.column() == 2):
+            option.displayAlignment = Qt.AlignmentFlag.AlignCenter
+        elif (modelIndex.column() > 2):
+            if (self.paint_color(painter, option, modelIndex)):
+                return
         super().paint(painter, option, index)
-        viewItem: QStyleOptionViewItem = option
         return
+    
+    def paint_color(self, painter: QPainter, 
+                    option: QStyleOptionViewItem, index: QModelIndex) -> bool :
+        cell_text = index.data(Qt.ItemDataRole.DisplayRole)
+        newRect: QRect = option.rect.adjusted(0, 0, -1, -1)
+        if (cell_text == "Done"):
+            painter.fillRect(newRect, QColorConstants.Black)
+            return True
+        elif (cell_text == "In Progress"):
+            painter.fillRect(newRect, QColorConstants.DarkGreen)
+            return True
+        elif (cell_text == "In Review"):
+            painter.fillRect(newRect, QColorConstants.Blue)
+            return True
+        elif (cell_text == "Blocked"):
+            painter.fillRect(newRect, QColorConstants.Red)
+            return True
+        elif (cell_text == "To Do"):
+            # do not paint
+            return True
+        return False
